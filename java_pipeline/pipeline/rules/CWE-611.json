@@ -1,0 +1,49 @@
+{
+ "cwe": "CWE-611",
+ "name": "XML External Entity (XXE) Reference",
+ "kind": "sink",
+ "provenance": "Written from the CWE-611 definition and JAXP / StAX / SAX / DOM / JDOM / dom4j / Saxon API knowledge. The hardening vocabulary is ported from sink-pipeline/java_commons_compress_run/scripts/sink_finder_java.py (_XXE_HARDENING_RE), which was derived from afc-pdfbox ground truth, not from this benchmark.",
+ "sinks": [
+  {
+   "id": "factory-newInstance",
+   "k": "call",
+   "recv_type": "^(?:DocumentBuilderFactory|SAXParserFactory|XMLInputFactory|TransformerFactory|SAXTransformerFactory|SchemaFactory|XPathFactory|XMLReaderFactory|XMLEventFactory|DatatypeFactory)$",
+   "name": "^(?:newInstance|newFactory|newDefaultInstance|newDefaultNSInstance|createXMLReader)$",
+   "args": [],
+   "dyn": false
+  },
+  {
+   "id": "factory-impl",
+   "k": "new",
+   "name": "^(?:TransformerFactoryImpl|SAXTransformerFactoryImpl|DocumentBuilderFactoryImpl|SAXParserFactoryImpl|XMLInputFactoryImpl|SchemaFactoryImpl)$",
+   "args": [],
+   "dyn": false
+  },
+  {
+   "id": "third-party-parser",
+   "k": "new",
+   "name": "^(?:SAXBuilder|SAXReader|SAXParser|DOMParser|XMLReader|Builder|Digester|XMLInputFactory)$",
+   "args": [],
+   "dyn": false
+  },
+  {
+   "id": "dom4j-parse",
+   "k": "call",
+   "recv_type": "^(?:DocumentHelper)$",
+   "name": "^(?:parseText)$",
+   "args": [],
+   "dyn": false
+  },
+  {
+   "id": "direct-parse",
+   "k": "call",
+   "recv_type": "^(?:DocumentBuilder|SAXParser|XMLReader|Unmarshaller|Transformer|Validator|SchemaFactory|XMLStreamReader|XPath)$",
+   "name": "^(?:parse|unmarshal|transform|validate|newSchema|evaluate)$",
+   "args": [],
+   "dyn": false
+  }
+ ],
+ "unless": "\\.setFeature\\s*\\(\\s*\\\"[^\\\"]*(?:disallow-doctype-decl|external-general-entities|external-parameter-entities|load-external-dtd)[^\\\"]*\\\"|\\.setXIncludeAware\\s*\\(\\s*false\\s*\\)|\\.setExpandEntityReferences\\s*\\(\\s*false\\s*\\)|FEATURE_SECURE_PROCESSING|\\.setProperty\\s*\\(\\s*(?:XMLInputFactory\\.)?(?:SUPPORT_DTD|IS_SUPPORTING_EXTERNAL_ENTITIES)\\s*,\\s*(?:false|Boolean\\.FALSE)|\\.setAttribute\\s*\\(\\s*(?:XMLConstants\\.)?ACCESS_EXTERNAL_(?:DTD|SCHEMA|STYLESHEET)|\\.setFeature\\s*\\(\\s*(?:XMLConstants\\.)?FEATURE_SECURE_PROCESSING|\\b\\w*(?:[Xx][Xx][Ee]|[Ss]ecure|[Hh]arden|[Pp]rotected|[Ss]afe)\\w*\\s*\\(",
+ "source_extra": "xmlio",
+ "notes": "'Missing hardening' shape: a parser/factory is created or used and the unit contains no hardening call (or call to a helper whose name says it is XXE-protected). The unit is the scope of the guard, as in the PHP prototype; the guard FILTERS here (it is the defining condition of the weakness)."
+}

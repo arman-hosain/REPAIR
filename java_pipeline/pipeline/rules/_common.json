@@ -1,0 +1,10 @@
+{
+ "doc": "Shared vocabulary. Written from the Servlet / Spring MVC / JAX-RS / archive-library APIs, not from eval_slices.",
+ "input": "\\b(?:getParameter|getParameterMap|getParameterValues|getParameterNames|getHeader|getHeaders|getQueryString|getPathInfo|getPathTranslated|getRequestURI|getRequestURL|getServletPath|getCookies|getInputStream|getReader|getPart|getParts|getRemoteUser)\\s*\\(|@(?:RequestParam|PathVariable|RequestBody|RequestHeader|RequestPart|ModelAttribute|CookieValue|MatrixVariable|QueryParam|PathParam|FormParam|HeaderParam|CookieParam|BeanParam)\\b|\\b(?:HttpServletRequest|ServletRequest|MultipartFile|MultipartHttpServletRequest|WebRequest|ServletInputStream)\\b",
+ "archive": "\\b(?:ZipEntry|ZipFile|ZipInputStream|JarEntry|JarFile|JarInputStream|ArchiveEntry|ArchiveInputStream|TarArchiveEntry|TarEntry|TarInputStream|ZipArchiveEntry|SevenZArchiveEntry)\\b",
+ "handler": "@(?:RequestMapping|GetMapping|PostMapping|PutMapping|DeleteMapping|PatchMapping|Path|GET|POST|PUT|DELETE)\\b|\\bdo(?:Get|Post|Put|Delete|Filter)\\s*\\(",
+ "xmlio": "\\b(?:InputStream|Reader|InputSource|StreamSource|XMLStreamReader|ServletInputStream|MultipartFile)\\b",
+ "db": "\\b(?:ResultSet|getResultList|uniqueResult|createCriteria|createQuery|executeQuery)\\b",
+ "safe_numeric": "^(?:parseInt|parseLong|parseDouble|parseFloat|parseBoolean|intValue|longValue|doubleValue|booleanValue|size|length|count|ordinal|hashCode|currentTimeMillis|nanoTime|random|randomUUID|nextInt|nextLong)$",
+ "constants": "^(?:[A-Z][A-Z0-9_]*|(?:[\\w.$]+\\.)+[A-Z][A-Z0-9_]*|File\\.(?:separator|pathSeparator|separatorChar)|System\\.lineSeparator\\(\\))$"
+}

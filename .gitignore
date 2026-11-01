@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Pipeline caches (unit/call-graph extraction cache, LLM response cache)
+pipeline/cache/
+**/pipeline/cache/
+cache/llm/
+
+# Pipeline run outputs (scan/reachability/analyze results — user-generated, not source)
+out/
+output/
+results/
+*.jsonl
+sinks_all.json
+sinks_final.json
+sinks_reachable.json
+sinks_filtered.json
+report.txt
+
+# Logs / usage tracking
+*.log
+usage.jsonl
+
+# Secrets / local env
+.env
+*.env.local
+config.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

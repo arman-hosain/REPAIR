@@ -1,0 +1,30 @@
+{
+  "_comment": "Copy this file to config.json (same directory) and fill in your real values. config.json is gitignored so your endpoint/key never get committed. Any field left out here falls back to each pipeline's built-in default. CLI flags (--endpoint/--model/--api-key) always override this file.",
+
+  "default": {
+    "endpoint": "http://127.0.0.1:8001/v1",
+    "model": "meta-llama/Llama-3.1-8B-Instruct",
+    "api_key": "dummy"
+  },
+
+  "cpp": {
+    "_comment": "Overrides 'default' for cpp_pipeline only. Example for a local vLLM server:",
+    "endpoint": "http://127.0.0.1:8001/v1",
+    "model": "meta-llama/Llama-3.1-8B-Instruct",
+    "api_key": "dummy"
+  },
+
+  "java": {
+    "_comment": "Overrides 'default' for java_pipeline only. Example for a local vLLM server:",
+    "endpoint": "http://127.0.0.1:8002/v1",
+    "model": "openai/gpt-oss-20b",
+    "api_key": "dummy"
+  },
+
+  "_example_proprietary_llm": {
+    "_comment": "To point either pipeline at a hosted/proprietary model instead, put something like this under 'cpp' or 'java' above:",
+    "endpoint": "https://api.your-provider.com/v1",
+    "model": "your-provider/your-model-name",
+    "api_key": "sk-your-real-api-key-here"
+  }
+}

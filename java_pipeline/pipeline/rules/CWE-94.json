@@ -1,0 +1,92 @@
+{
+ "cwe": "CWE-94",
+ "name": "Code Injection (expression / script / template evaluation)",
+ "kind": "sink",
+ "provenance": "Written from the CWE-94 definition and Velocity / javax.script / Groovy / Spring SpEL / OGNL / MVEL / JEXL / BeanShell / Rhino API knowledge. Not derived from eval_slices.",
+ "sinks": [
+  {
+   "id": "script-eval",
+   "k": "call",
+   "recv_type": "^(?:ScriptEngine|Compilable|Invocable|GroovyShell|GroovyScriptEngine|Interpreter|Context|CompilerConfiguration|Binding)$",
+   "recv_hint": "(?i)engine|shell|script|interp",
+   "name": "^(?:eval|evaluate|parse|compile|run|evaluateString|compileString)$",
+   "args": [
+    0
+   ]
+  },
+  {
+   "id": "groovy-eval",
+   "k": "call",
+   "recv_type": "^(?:Eval)$",
+   "name": "^(?:me|x|xy|xyz)$",
+   "args": "*"
+  },
+  {
+   "id": "velocity-evaluate",
+   "k": "call",
+   "recv_type": "^(?:VelocityEngine|Velocity|RuntimeServices|RuntimeInstance|VelocityEngineImpl)$",
+   "recv_hint": "(?i)velocity",
+   "name": "^(?:evaluate|mergeTemplate|invokeVelocimacro)$",
+   "args": [
+    3
+   ]
+  },
+  {
+   "id": "velocity-engine-unhardened",
+   "k": "new",
+   "name": "^(?:VelocityEngine|RuntimeInstance)$",
+   "args": [],
+   "dyn": false,
+   "unless": "SecureUberspector|runtime\\.introspector\\.uberspect|RUNTIME_INTROSPECTOR|UberspectImpl|setProperty\\s*\\(\\s*\\\"[^\\\"]*uberspect"
+  },
+  {
+   "id": "spel",
+   "k": "call",
+   "recv_type": "^(?:SpelExpressionParser|ExpressionParser|TemplateAwareExpressionParser)$",
+   "recv_hint": "(?i)parser|spel",
+   "name": "^(?:parseExpression|parseRaw)$",
+   "args": [
+    0
+   ]
+  },
+  {
+   "id": "ognl",
+   "k": "call",
+   "recv_type": "^(?:Ognl|OgnlUtil)$",
+   "name": "^(?:getValue|setValue|parseExpression|compile)$",
+   "args": [
+    0
+   ]
+  },
+  {
+   "id": "mvel",
+   "k": "call",
+   "recv_type": "^(?:MVEL|MVELCompiler|ParserContext)$",
+   "name": "^(?:eval|executeExpression|compileExpression|evalToString|executeAllExpression)$",
+   "args": [
+    0
+   ]
+  },
+  {
+   "id": "jexl",
+   "k": "call",
+   "recv_type": "^(?:JexlEngine|JexlBuilder|JexlScript)$",
+   "recv_hint": "(?i)jexl",
+   "name": "^(?:createExpression|createScript|createTemplate)$",
+   "args": [
+    0
+   ]
+  },
+  {
+   "id": "java-compiler",
+   "k": "call",
+   "recv_type": "^(?:JavaCompiler)$",
+   "name": "^(?:getTask|run)$",
+   "args": "*"
+  }
+ ],
+ "safe_call_names": "^(?:valueOf)$",
+ "guard": "SecureUberspector|runtime\\.introspector\\.uberspect|SimpleType|StandardEvaluationContext|SimpleEvaluationContext|ClassFilter|SandboxInterceptor|allowedClasses|noSecureUberspector",
+ "guard_mode": "flag",
+ "notes": "Velocity evaluate(ctx, writer, logTag, template): the template argument (index 3) is the injection point. An engine created without a restricted introspector is a separate (non-dynamic) sink."
+}

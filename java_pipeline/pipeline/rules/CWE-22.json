@@ -1,0 +1,55 @@
+{
+ "cwe": "CWE-22",
+ "name": "Path Traversal",
+ "kind": "sink",
+ "provenance": "Written from the CWE-22 definition and java.io / java.nio.file / Servlet / commons-io API knowledge; zip-slip shape from the generic archive-extraction pattern. Not derived from eval_slices.",
+ "sinks": [
+  {
+   "id": "io-ctor",
+   "k": "new",
+   "name": "^(?:File|FileInputStream|FileOutputStream|FileReader|FileWriter|RandomAccessFile|ZipFile|JarFile)$",
+   "args": "*"
+  },
+  {
+   "id": "nio-path",
+   "k": "call",
+   "recv_type": "^(?:Paths|Path)$",
+   "name": "^(?:get|of)$",
+   "args": "*"
+  },
+  {
+   "id": "nio-files",
+   "k": "call",
+   "recv_type": "^Files$",
+   "name": "^(?:copy|move|newInputStream|newOutputStream|newBufferedReader|newBufferedWriter|readAllBytes|readAllLines|readString|write|writeString|lines|createFile|createDirectory|createDirectories|createSymbolicLink|createLink|delete|deleteIfExists|walk|list|newDirectoryStream|exists|isRegularFile|isDirectory)$",
+   "args": "*"
+  },
+  {
+   "id": "path-resolve",
+   "k": "call",
+   "recv_type": "^(?:Path|File)$",
+   "recv_hint": "(?i)path|dir|folder|root|base|target|dest",
+   "name": "^(?:resolve|resolveSibling)$",
+   "args": "*"
+  },
+  {
+   "id": "servlet-resource",
+   "k": "call",
+   "name": "^(?:getRealPath|getResourceAsStream|getResource|getRequestDispatcher)$",
+   "recv_hint": "(?i)context|servlet|request|loader|class",
+   "args": "*"
+  },
+  {
+   "id": "commons-io",
+   "k": "call",
+   "recv_type": "^FileUtils$",
+   "name": "^(?:readFileToString|readFileToByteArray|readLines|copyFile|copyFileToDirectory|copyDirectory|moveFile|moveDirectory|write|writeStringToFile|writeByteArrayToFile|openInputStream|openOutputStream|deleteDirectory|forceDelete|forceMkdir|listFiles|touch)$",
+   "args": "*"
+  }
+ ],
+ "safe_call_names": "^(?:getName|getBaseName|getFileName|sanitize\\w*|safe\\w*|createTempFile|createTempDirectory|createTempFiles|getTempDirectory|getProperty)$",
+ "guard": "getCanonicalPath|getCanonicalFile|toRealPath|\\.normalize\\s*\\(|FilenameUtils\\.(?:getName|normalize|concat)|isAbsolute\\s*\\(|\\.startsWith\\s*\\(|\\.contains\\s*\\(\\s*\\\"\\.\\.\\\"|\\\"\\.\\.\\\"",
+ "guard_mode": "flag",
+ "source_extra": "archive",
+ "notes": "S2 = a path sink whose argument is not a literal / constant / neutralised value. A canonical/normalize/startsWith check is recorded as `guarded` but is NOT a filter (a check anywhere in a large unit does not prove it dominates the sink)."
+}

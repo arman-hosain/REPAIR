@@ -1,0 +1,67 @@
+{
+ "cwe": "CWE-79",
+ "name": "Cross-site Scripting",
+ "kind": "sink",
+ "provenance": "Written from the CWE-79 definition and Servlet / Spring MVC / JAX-RS / OWASP Encoder / commons-text / Grails GSP knowledge. The HTML-string-construction sink (concat/format of a markup literal with a dynamic part) is taken from general XSS knowledge AND from the PHP pass-2 diagnosis in ptest/notes (different dataset), not from eval_slices.",
+ "sinks": [
+  {
+   "id": "writer-output",
+   "k": "call",
+   "recv_type": "^(?:PrintWriter|JspWriter|Writer|StringWriter|BufferedWriter|ServletOutputStream|PrintStream|OutputStream)$",
+   "recv_hint": "getWriter\\(\\)|getOutputStream\\(\\)|^out$|^writer$|^pw$",
+   "name": "^(?:print|println|write|append|printf|format)$",
+   "args": "*"
+  },
+  {
+   "id": "send-error",
+   "k": "call",
+   "recv_hint": "(?i)resp|response",
+   "name": "^sendError$",
+   "args": [
+    1
+   ]
+  },
+  {
+   "id": "fmt-html",
+   "k": "call",
+   "recv_type": "^(?:String|MessageFormat)$",
+   "name": "^(?:format|formatted)$",
+   "fmt": "<\\s*[A-Za-z/!]",
+   "args": "*"
+  },
+  {
+   "id": "html-concat",
+   "concat": "<\\s*[A-Za-z/!]"
+  }
+ ],
+ "gsp": {
+  "expr": [
+   "\\$\\{(.*?)\\}",
+   "<%=(.*?)%>"
+  ],
+  "safe": [
+   "^\\s*$",
+   "^\\s*(?:true|false|null|\\d+(?:\\.\\d+)?|'[^']*'|\\\"[^\\\"]*\\\")\\s*$",
+   "\\bencodeHtml\\w*\\s*\\(",
+   "\\bencodeAttribute\\s*\\(",
+   "\\bencodeAsHTML\\b",
+   "\\bencodeAsURL\\b",
+   "\\bencodeAsJavaScript\\b",
+   "\\bencodeJavaScript\\s*\\(",
+   "\\bescapeHtml\\w*\\s*\\(",
+   "\\bhtmlEscape\\w*\\s*\\(",
+   "\\bfmt\\b",
+   "(?:^|[\\s.(])h\\(",
+   "\\bmessage\\s*\\(",
+   "\\bformatNumber\\b",
+   "\\.size\\(\\)|\\.length\\b|\\.count\\b",
+   "^\\s*(?:ui|g)\\.(?:resourceLink|pageLink|includeFragment|includeResources|toJson)\\b"
+  ],
+  "doc": "${...} / <%= %> expressions are output. Safe = literal, or wrapped in an HTML/attribute/URL/JS encoder, a message lookup or a numeric. A JavaScript-STRING escaper (escapeJs, js) is not an HTML encoder and is not listed."
+ },
+ "safe_call_names": "^(?:htmlEscape\\w*|escapeHtml\\d*|escapeXml\\w*|escapeEcmaScript|escapeJavaScript|encodeFor\\w+|encodeHtml\\w*|encodeAs\\w+|encodeJavaScript|encodeAttribute|forHtml\\w*|forXml\\w*|forJavaScript\\w*|forUriComponent|clean|sanitize\\w*|encode|urlEncode|escape)$",
+ "guard": "HtmlUtils|StringEscapeUtils|Encode\\.for|ESAPI|Jsoup\\.clean|encodeHtml|escapeHtml|Sanitizer",
+ "guard_mode": "flag",
+ "source_extra": "db",
+ "notes": "S1 = unit has an output sink / HTML-building string / (.gsp) output expression. S2 = at least one such sink has a dynamic part not wrapped in an HTML encoder. .gsp templates are file-scope units."
+}

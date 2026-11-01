@@ -1,0 +1,13 @@
+{
+ "cwe": "CWE-20",
+ "name": "Improper Input Validation",
+ "kind": "pred",
+ "provenance": "Written from the CWE-20 definition. CWE-20 is a parent weakness with no characteristic sink: this rule is intentionally BROAD (untrusted input reaches a sensitive operation inside a unit with no validation / authorization vocabulary). Expect low precision and weak recall; it is a baseline for the class, not a detector.",
+ "op_all": [
+  "@input_or_handler",
+  "\\bnew\\s+(?:File|FileInputStream|FileOutputStream|FileReader|FileWriter|RandomAccessFile)\\s*\\(|\\bFiles\\.\\w+\\s*\\(|\\bPaths\\.get\\s*\\(|\\bProcessBuilder\\b|\\.exec\\s*\\(|\\.(?:executeQuery|executeUpdate|execute|prepareStatement|createQuery|createSQLQuery|createNativeQuery)\\s*\\(|\\b(?:ObjectInputStream|XMLDecoder|XStream|readObject)\\b|\\b(?:Integer\\.parseInt|Long\\.parseLong|Integer\\.valueOf|Long\\.valueOf|Double\\.parseDouble|UUID\\.fromString)\\s*\\(|\\.sendRedirect\\s*\\(|\\bClass\\.forName\\s*\\(|\\b(?:save|delete|purge|update|remove|create|retire|void)\\w*\\s*\\("
+ ],
+ "guard": "(?i)\\b(?:validate\\w*|isValid\\w*|check\\w*|verify\\w*|assert\\w*|require\\w*|sanitiz\\w*|hasPrivilege|hasRole|isAuthenticated|isUserInRole|checkPermission|authorize\\w*|authoriz\\w*|canAccess|isAllowed)\\b|@(?:Valid|Validated|PreAuthorize|Secured|RolesAllowed|Authorized)\\b|Objects\\.requireNonNull|Preconditions\\.check|\\bAssert\\.|StringUtils\\.is(?:Blank|Numeric|Empty|NotBlank)|\\.matches\\s*\\(|\\bPattern\\.|\\.normalize\\s*\\(|isAbsolute\\s*\\(|getCanonicalPath",
+ "propagate": true,
+ "notes": "S1 = unit reads untrusted input (or is a request handler) AND performs a sensitive operation. S2 = S1 and no validation/authorization vocabulary in the unit and not every in-slice caller chain is guarded (PHP pred semantics)."
+}
